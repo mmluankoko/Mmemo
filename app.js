@@ -5,36 +5,47 @@ const ipc = electron.ipcMain
 const dialog = electron.dialog
 const Menu = electron.Menu
 const Tray = electron.Tray
+const platform = require('os').platform()
 
 const path = require('path')
 const url = require('url')
 const win = require('electron-window')
-const getId = require('shortid').generate
+const getID = require('shortid').generate
+const Config = require('electron-config')
+
+const memoLib = new Config({name:'memoLib'})
+const memoPagePath = path.resolve(__dirname, 'src', 'memo.html')
+const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
 
 let appIcon = null
-let mainWindow
+let aboutWindow
 let memoWindows = {}
-let memos = {
-  '23TplPdS': {
-    id: '23TplPdS', title: 'title 1', content: 'A controlling editorial pretends after the basket.'
-  },
-  '46Juzcyx': {
-    id: '46Juzcyx', title: 'title 2', content: 'The sheer gate pops below his drivel.'
-  }
-}
 
 app.on('ready', () => {
-
-  const iconPath = path.join(__dirname, 'asset', 'task-icon.png')
+  // Setup tray icon
+  let iconPath
+  if (platform === 'darwin') {
+    iconPath = path.join(__dirname, 'asset', 'trayTemplate.png')
+  }
+  if (platform === 'win32') {
+    iconPath = path.join(__dirname, 'asset', 'tray.ico')
+  }
   appIcon = new Tray(iconPath)
   const contextMenu = Menu.buildFromTemplate(
     [{
-      label: '新便签',
-      click: function () {
-        event.sender.send('tray-removed')
-      }
+      label: '新便签...',
+      click: () => newMemo()
+    },{
+      label: '全部解锁',
+      click: () => broadCast('unlock')
+    },{
+      label: '全部锁定',
+      click: () => broadCast('lock')
     },{
       type: 'separator'
+    },{
+      label: '关于...',
+      click: () => showAbout()
     },{
       label: '退出',
       click: () => app.quit()
@@ -43,43 +54,64 @@ app.on('ready', () => {
   appIcon.setToolTip('Mmemo')
   appIcon.setContextMenu(contextMenu)
 
-  for (let id in memos) {
-    let m = win.createWindow({
-      width: 400,
-      height: 400,
-      // transparent: true,
-      // useContentSize: true,
-      frame: true
-    })
-    const data = memos[id]
-    const pagePath = path.resolve(__dirname, 'src', 'memo.html')
-
-    m.showUrl(pagePath, data)
+  // show exsiting memos
+  for (let id in memoLib.store) {
+    showMemo(id)
   }
 })
 
-
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
-// app.on('ready', createWindow)
-
-// Quit when all windows are closed.
 app.on('window-all-closed', function () {
-  // On OS X it is common for applications and their menu bar
-  // to stay active until the user quits explicitly with Cmd + Q
-  if (process.platform !== 'darwin') {
-    app.quit()
-  }
 })
 
 app.on('activate', function () {
-  // On OS X it's common to re-create a window in the app when the
-  // dock icon is clicked and there are no other windows open.
-  if (mainWindow === null) {
-    createWindow()
-  }
+})
+
+ipc.on('set-memo', (e, d) => {
+  memoLib.set(d.id, d)
+})
+
+ipc.on('del-memo', (e, id) => {
+  memoLib.delete(id)
+  memoWindows[id].close()
 })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
+function showMemo(id) {
+  memoWindows[id] = win.createWindow({
+    width: 400,
+    height: 400,
+    // transparent: true,
+    // useContentSize: true,
+    frame: true
+  })
+  memoWindows[id].showUrl(memoPagePath, memoLib.store[id])
+}
+
+function showAbout(){
+  aboutWindow = win.createWindow({
+    width: 302,
+    height: 400,
+    transparent: false,
+    frame: true
+  })
+  aboutWindow.showUrl(aboutPagePath)
+}
+
+function newMemo() {
+  let id = getID()
+  let memo = {}
+  memo.id = id
+  memo.title = '新便签'
+  memo.content = ''
+  memo.locked = false
+  memo.editMode = true
+  memoLib.set(id,memo)
+  showMemo(id)
+}
+
+function broadCast(c) {
+  for (let id in memoWindows) {
+    memoWindows[id].webContents.send(c)
+  }
+}

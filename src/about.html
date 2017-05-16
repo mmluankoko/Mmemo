@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>About - Mmemo</title>
+  <style>
+    body{
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+    }
+    .container{
+      padding-left: 27px;
+      cursor: pointer
+    }
+    .logo{
+      height: 50px;
+      position: relative;
+    }
+    .logo-text{
+      display: inline-block;
+      position: relative;
+    }
+    .electron{
+      padding-top: 13px;
+      padding-bottom: 13px;
+      padding-left: 30px;
+      background-color: #2f3241;
+    }
+    .electron .logo{
+      height: 35px;
+      top: 3px;
+    }
+    .electron .logo path{
+      fill: #ffffff;
+
+    }
+    .react{
+      background-color: #222222;
+      padding-top: 0px;
+    }
+    .react .logo{
+      top: 5px;
+      left: 8px;
+    }
+    .react .logo-text{
+      color: #00d8ff;
+      font-size: 32px;
+      left: 35px;
+      top: 0px;
+    }
+    .material-ui{
+      background-color: #00bcd4;
+      padding-top: 3px;
+      padding-bottom: 0px;
+    }
+    .material-ui .logo{
+      top: 2px;
+    }
+    .material-ui .logo-text{
+      color: rgba(255, 255, 255, 0.870588);
+      font-size: 24px;
+      font-weight: 300;
+      top: 0px;
+      left: -60px;
+    }
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/javascript">
+    const remote = require('electron').remote
+    const opn = require('opn');
+  </script>
+  <script src="about.min.js" charset="utf-8"></script>
+</body>
+</html>
