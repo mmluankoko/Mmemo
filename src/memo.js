@@ -9,7 +9,7 @@ import {Card, CardActions, CardHeader, CardText} from 'material-ui/Card';
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 import AppBar from 'material-ui/AppBar';
 
-import { white } from 'material-ui/styles/colors';
+import { white,red500 } from 'material-ui/styles/colors';
 import getMuiTheme from 'material-ui/styles/getMuiTheme';
 
 import IconButton from 'material-ui/IconButton';
@@ -23,25 +23,36 @@ import MoreVertIcon from 'material-ui/svg-icons/navigation/more-vert';
 import NavigationClose from 'material-ui/svg-icons/navigation/close';
 
 class EditButton extends Component {
-  render() {
-    return (
-      <IconMenu
-        style={{webkitAppRegion: 'no-drag'}}
-        iconButtonElement={
-          <IconButton><MoreVertIcon/></IconButton>
-        }
-        targetOrigin={{horizontal: 'right', vertical: 'top'}}
-        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
-      >
-        <MenuItem primaryText="编辑" onClick={() => {
-          console.log('edit clicked')
-          this.props.editHandler()
-        }}/>
+  getItem(){
+    console.log(this.props);
+    if (this.props.editMode) {
+      return (
         <MenuItem primaryText="完成" onClick={() => {
           console.log('done clicked')
           this.props.doneHandler()
         }}/>
-        <MenuItem primaryText="删除" onClick={() => {
+      )
+    } else {
+      return (
+        <MenuItem primaryText="编辑" onClick={() => {
+          console.log('edit clicked')
+          this.props.editHandler()
+        }}/>
+      )
+    }
+
+  }
+  render() {
+    return (
+      <IconMenu
+        style={{webkitAppRegion: 'no-drag'}}
+        desktop = {true}
+        iconButtonElement={<IconButton><MoreVertIcon/></IconButton>}
+        targetOrigin={{horizontal: 'right', vertical: 'top'}}
+        anchorOrigin={{horizontal: 'right', vertical: 'top'}}
+      >
+        {this.getItem()}
+        <MenuItem style={{color:red500}} primaryText="删除" onClick={() => {
           console.log('del clicked')
           this.props.delHandler()
         }}/>
@@ -63,14 +74,10 @@ class App extends Component {
     this.state.locked = data.locked
     this.state.theme = getMuiTheme({
       appBar: {
-        height: 50
+        height: 46
       },
       svgIcon: {
         color: white
-      },
-      textField: {
-        // textColor: white,
-        // focusColor: white
       }
     });
     console.log(this.state)
@@ -111,8 +118,8 @@ class App extends Component {
   }
 
   setWinHeight(h){
-    if (h < 190) {
-      h = 190
+    if (h < 110) {
+      h = 110
     }
     this.win.setSize(this.winWidth,h)
   }
@@ -155,7 +162,9 @@ class App extends Component {
     return(
       <EditButton doneHandler={this.doneHandler}
                   editHandler={this.editHandler}
-                  delHandler ={this.delHandler}/>
+                  delHandler ={this.delHandler}
+                  editMode={this.state.editMode}
+                  />
     )
   }
 
@@ -176,12 +185,14 @@ class App extends Component {
   }
 
   render() {
+    console.log(this.state.theme);
     return (
       <MuiThemeProvider muiTheme={this.state.theme}>
         <div>
           <AppBar title={this.getTitle()}
                   showMenuIconButton={false}
                   style={{webkitUserSelect: 'none', webkitAppRegion: 'drag'}}
+                  titleStyle={{fontSize:'20px'}}
                   iconElementRight={this.state.locked ? undefined: this.getEditButton()}/>
           <Card>
             <CardText>

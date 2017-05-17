@@ -84,42 +84,46 @@ ipc.on('set-memo', (e, d) => {
 })
 
 ipc.on('del-memo', (e, id) => {
+  let tmp = memoWindows[id]
   memoLib.delete(id)
-  memoWindows[id].close()
+  delete memoWindows[id]
+  tmp.close()
 })
 
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 function showMemo(id) {
-  let memos = memoLib.store
+  let memo = memoLib.store[id]
   let x,y,w,h
-  if (!memos[id].bounds) {
+  if (!memo.bounds) {
     w = 400
     h = 400
   } else {
-    x = memos[id].bounds.x
-    y = memos[id].bounds.y
-    w = memos[id].bounds.width
-    h = memos[id].bounds.height
+    x = memo.bounds.x
+    y = memo.bounds.y
+    w = memo.bounds.width
+    h = memo.bounds.height
   }
   memoWindows[id] = win.createWindow({
     x: x,
     y: y,
     width: w,
     height: h,
-    transparent: false,
-    // useContentSize: true,
+    transparent: true,
+    resizable: false,
     frame: false,
-    skipTaskbar: true
+    skipTaskbar: true,
+    acceptFirstMouse: true
   })
+  if (memo.locked)
+    memoWindows[id].setIgnoreMouseEvents(true)
   memoWindows[id].on('close', (e) => {
     bounds = e.sender.getBounds()
-    console.log(bounds)
     let tmp = memoLib.get(id)
     tmp.bounds = bounds
     memoLib.set(id, tmp)
   })
-  memoWindows[id].showUrl(memoPagePath, memoLib.store[id])
+  memoWindows[id].showUrl(memoPagePath, memo)
 }
 
 function showAbout(){
@@ -127,13 +131,17 @@ function showAbout(){
     width: 310,
     height: 400,
     transparent: true,
-    frame: false
+    frame: false,
+    resizable: false
   })
   aboutWindow.showUrl(aboutPagePath)
 }
 
 function newMemo() {
-  let id = getID()
+  let id =getID()
+  while (memoLib.has(id)) {
+    id = getID()
+  }
   let memo = {}
   memo.id = id
   memo.title = '新便签'
@@ -146,6 +154,8 @@ function newMemo() {
 
 function broadCast(c) {
   for (let id in memoWindows) {
-    memoWindows[id].webContents.send(c)
+    if (memoWindows[id]) {
+      memoWindows[id].webContents.send(c)
+    }
   }
 }
