@@ -88,14 +88,13 @@ function showMemo(id) {
     y = memos[id].bounds.y
     w = memos[id].bounds.width
     h = memos[id].bounds.height
-    // console.log();
   }
   memoWindows[id] = win.createWindow({
     x: x,
     y: y,
     width: w,
     height: h,
-    // transparent: true,
+    transparent: true,
     // useContentSize: true,
     frame: false,
     skipTaskbar: true
