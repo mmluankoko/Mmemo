@@ -74,6 +74,8 @@ class App extends Component {
       }
     });
     console.log(this.state)
+    this.win = remote.getCurrentWindow()
+    this.winWidth = this.win.getSize()[0]
     this.doneHandler = this.doneHandler.bind(this)
     this.editHandler = this.editHandler.bind(this)
     this.delHandler = this.delHandler.bind(this)
@@ -81,23 +83,38 @@ class App extends Component {
 
   doneHandler(){
     this.setState({editMode: false})
-    document.title = this.state.title + ' - Mmemo';
+    setTimeout(() => {
+      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+50)
+    }, 500);
+    document.title = this.state.title + ' - Mmemo'
+    if (this.tID) clearInterval(this.tID)
     let d = {}
     d.id = this.state.id
     d.title = this.state.title
     d.content = this.state.content
-    d.locked = false
+    d.locked = this.state.locked
     d.editMode = false
     ipc.send('set-memo', d)
   }
 
   editHandler(){
+    this.setWinHeight(400)
     this.setState({editMode: true})
+    this.tID = setInterval(() => {
+      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+50)
+    }, 100)
   }
 
   delHandler(){
     console.log('del');
     ipc.send('del-memo', this.state.id)
+  }
+
+  setWinHeight(h){
+    if (h < 190) {
+      h = 190
+    }
+    this.win.setSize(this.winWidth,h)
   }
 
   getTitle(){
@@ -144,10 +161,10 @@ class App extends Component {
 
   componentDidMount(){
     document.title = this.state.title + ' - Mmemo';
-    // console.log(ReactDOM.findDOMNode(this))
-    // ReactDOM.findDOMNode(this).addEventListener('resize', () => console.log('resized'));
+    this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+50)
     ipc.on('lock', () => {
       console.log('lock');
+      this.setState({locked:true})
       this.doneHandler()
     })
     ipc.on('unlock', () => {

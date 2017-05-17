@@ -78,19 +78,41 @@ ipc.on('del-memo', (e, id) => {
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 function showMemo(id) {
+  let memos = memoLib.store
+  let x,y,w,h
+  if (!memos[id].bounds) {
+    w = 400
+    h = 400
+  } else {
+    x = memos[id].bounds.x
+    y = memos[id].bounds.y
+    w = memos[id].bounds.width
+    h = memos[id].bounds.height
+    // console.log();
+  }
   memoWindows[id] = win.createWindow({
-    width: 400,
-    height: 400,
+    x: x,
+    y: y,
+    width: w,
+    height: h,
     // transparent: true,
     // useContentSize: true,
-    frame: true
+    frame: false,
+    skipTaskbar: true
+  })
+  memoWindows[id].on('close', (e) => {
+    bounds = e.sender.getBounds()
+    console.log(bounds)
+    let tmp = memoLib.get(id)
+    tmp.bounds = bounds
+    memoLib.set(id, tmp)
   })
   memoWindows[id].showUrl(memoPagePath, memoLib.store[id])
 }
 
 function showAbout(){
   aboutWindow = win.createWindow({
-    width: 302,
+    width: 310,
     height: 400,
     transparent: false,
     frame: true
