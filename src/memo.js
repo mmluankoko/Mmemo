@@ -84,7 +84,7 @@ class App extends Component {
   doneHandler(){
     this.setState({editMode: false})
     setTimeout(() => {
-      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+50)
+      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+16)
     }, 500);
     document.title = this.state.title + ' - Mmemo'
     if (this.tID) clearInterval(this.tID)
@@ -101,7 +101,7 @@ class App extends Component {
     this.setWinHeight(400)
     this.setState({editMode: true})
     this.tID = setInterval(() => {
-      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+50)
+      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+16)
     }, 100)
   }
 
@@ -161,7 +161,9 @@ class App extends Component {
 
   componentDidMount(){
     document.title = this.state.title + ' - Mmemo';
-    this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+50)
+    setTimeout(() => {
+      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+16)
+    }, 500);
     ipc.on('lock', () => {
       console.log('lock');
       this.setState({locked:true})
@@ -172,7 +174,6 @@ class App extends Component {
       this.setState({locked:false})
     })
   }
-
 
   render() {
     return (

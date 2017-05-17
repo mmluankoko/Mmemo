@@ -17,7 +17,7 @@ const memoLib = new Config({name:'memoLib'})
 const memoPagePath = path.resolve(__dirname, 'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
 
-let appIcon = null
+let tray = null
 let aboutWindow
 let memoWindows = {}
 
@@ -30,17 +30,23 @@ app.on('ready', () => {
   if (platform === 'win32') {
     iconPath = path.join(__dirname, 'asset', 'tray.ico')
   }
-  appIcon = new Tray(iconPath)
-  const contextMenu = Menu.buildFromTemplate(
+  tray = new Tray(iconPath)
+  let contextMenu = Menu.buildFromTemplate(
     [{
       label: '新便签...',
       click: () => newMemo()
     },{
       label: '全部解锁',
-      click: () => broadCast('unlock')
+      click: () => {broadCast('unlock')
+                    for (let id in memoWindows) {
+                      memoWindows[id].setIgnoreMouseEvents(false)
+                    }}
     },{
       label: '全部锁定',
-      click: () => broadCast('lock')
+      click: () => {broadCast('lock')
+                    for (let id in memoWindows) {
+                      memoWindows[id].setIgnoreMouseEvents(true)
+                    }}
     },{
       type: 'separator'
     },{
@@ -51,8 +57,15 @@ app.on('ready', () => {
       click: () => app.quit()
     }]
   )
-  appIcon.setToolTip('Mmemo')
-  appIcon.setContextMenu(contextMenu)
+  tray.setToolTip('Mmemo')
+  tray.setContextMenu(contextMenu)
+  if (platform === 'win32') {
+    tray.on('click', () => {
+      for (let id in memoWindows) {
+        memoWindows[id].focus()
+      }
+    })
+  }
 
   // show exsiting memos
   for (let id in memoLib.store) {
@@ -94,7 +107,7 @@ function showMemo(id) {
     y: y,
     width: w,
     height: h,
-    transparent: true,
+    transparent: false,
     // useContentSize: true,
     frame: false,
     skipTaskbar: true
@@ -113,8 +126,8 @@ function showAbout(){
   aboutWindow = win.createWindow({
     width: 310,
     height: 400,
-    transparent: false,
-    frame: true
+    transparent: true,
+    frame: false
   })
   aboutWindow.showUrl(aboutPagePath)
 }
