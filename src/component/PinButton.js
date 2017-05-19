@@ -10,7 +10,8 @@ class PinButton extends Component {
       <IconButton
         tooltip="置顶"
         tooltipPosition="bottom-right"
-        onClick={this.props.pinHandler}>
+        onClick={this.props.pinHandler}
+        style={{webkitAppRegion: 'no-drag'}}>
         <PublishIcon color={this.props.pinned ? white :  cyan300}/>
       </IconButton>
     )

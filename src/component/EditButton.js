@@ -6,14 +6,15 @@ import SaveIcon from 'material-ui/svg-icons/content/save'
 
 class EditButton extends Component {
   render() {
+    let style = {webkitAppRegion: 'no-drag'}
     if (this.props.mode === 'edit') {
       return (
-        <IconButton tooltip="保存" tooltipPosition="bottom-left" onClick={this.props.saveHandler}><SaveIcon/></IconButton>
+        <IconButton style={style} tooltip="保存" tooltipPosition="bottom-left" onClick={this.props.saveHandler}><SaveIcon/></IconButton>
       )
     }
     else if (this.props.mode === 'normal') {
       return (
-        <IconButton tooltip="编辑" tooltipPosition="bottom-left" onClick={this.props.editHandler}><EditIcon/></IconButton>
+        <IconButton style={style} tooltip="编辑" tooltipPosition="bottom-left" onClick={this.props.editHandler}><EditIcon/></IconButton>
       )
     }
     else if (this.props.mode === 'lock') {

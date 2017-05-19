@@ -128,7 +128,7 @@ class App extends Component {
         let newlineSplit = item.split('\n')
         for (let i of newlineSplit) {
           renderList.push(<span key={getID()}>{i}</span>)
-          renderList.push(<br key={getID()} />)
+          renderList.push(<br key={getID()}/>)
         }
         renderList.pop()
         renderList.push(<span key={getID()}>&nbsp;</span>)
@@ -136,15 +136,6 @@ class App extends Component {
       renderList.pop()
       return renderList
     }
-  }
-
-  getEditButton(){
-    return(
-      <EditButton saveHandler={this.saveHandler}
-                  editHandler={this.editHandler}
-                  mode={this.state.mode}
-                  />
-    )
   }
 
   componentDidMount(){

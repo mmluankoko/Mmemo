@@ -11,7 +11,8 @@ class DelButton extends Component {
       bottom: 'auto',
       left: 'auto',
       right: '0px',
-      zIndex: '2000'}
+      zIndex: '2000',
+      webkitAppRegion: 'no-drag'}
 
     if (this.props.mode === 'edit') {
       return (

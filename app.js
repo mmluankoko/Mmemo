@@ -17,7 +17,7 @@ const memoLib = new Config({name:'memoLib'})
 const memoPagePath = path.resolve(__dirname, 'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
 
-
+let debug = false
 let tray = null
 let aboutWindow
 let memoWindows = {}
@@ -122,9 +122,10 @@ function showMemo(id) {
     width: w,
     height: h,
     alwaysOnTop: memo.pinned,
-    transparent: false,
-    resizable: true,
-    frame: false,
+    transparent: debug ? false : true,
+    resizable: debug ? true : false,
+    fullscreenable: false,
+    frame: debug ? true : false,
     skipTaskbar: true,
     acceptFirstMouse: true
   })
