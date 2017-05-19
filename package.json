@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
-    "dev": "webpack-dev-server --content-base src & open 'http://localhost:8080/webpack-dev-server/index.html'"
+    "webpack-dev": "webpack --watch",
+    "webpack-prod": "NODE_ENV=production webpack"
   },
   "author": "",
   "license": "ISC",
@@ -20,8 +21,7 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
-    "webpack": "^2.5.1",
-    "webpack-dev-server": "^2.4.5"
+    "webpack": "^2.5.1"
   },
   "dependencies": {
     "electron": "^1.6.7",

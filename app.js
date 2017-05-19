@@ -1,21 +1,22 @@
 const electron = require('electron')
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
-const ipc = electron.ipcMain
 const dialog = electron.dialog
+const ipc = electron.ipcMain
 const Menu = electron.Menu
-const Tray = electron.Tray
 const platform = require('os').platform()
+const Tray = electron.Tray
 
+const Config = require('electron-config')
+const getID = require('shortid').generate
 const path = require('path')
 const url = require('url')
 const win = require('electron-window')
-const getID = require('shortid').generate
-const Config = require('electron-config')
 
 const memoLib = new Config({name:'memoLib'})
 const memoPagePath = path.resolve(__dirname, 'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
+
 
 let tray = null
 let aboutWindow
@@ -55,6 +56,9 @@ app.on('ready', () => {
     },{
       label: '退出',
       click: () => app.quit()
+    },{
+      label: '清空(debug)',
+      click: () => memoLib.clear()
     }]
   )
   tray.setToolTip('Mmemo')
@@ -90,10 +94,18 @@ ipc.on('del-memo', (e, id) => {
   tmp.close()
 })
 
+ipc.on('pin-memo', (e, id) => {
+  memoWindows[id].setAlwaysOnTop(true)
+})
+
+ipc.on('unpin-memo', (e, id) => {
+  memoWindows[id].setAlwaysOnTop(false)
+})
+
 // In this file you can include the rest of your app's specific main process
 // code. You can also put them in separate files and require them here.
 function showMemo(id) {
-  let memo = memoLib.store[id]
+  let memo = memoLib.get(id)
   let x,y,w,h
   if (!memo.bounds) {
     w = 400
@@ -109,14 +121,15 @@ function showMemo(id) {
     y: y,
     width: w,
     height: h,
-    transparent: true,
-    resizable: false,
+    alwaysOnTop: memo.pinned,
+    transparent: false,
+    resizable: true,
     frame: false,
     skipTaskbar: true,
     acceptFirstMouse: true
   })
-  if (memo.locked)
-    memoWindows[id].setIgnoreMouseEvents(true)
+  // if (memo.locked)
+  //   memoWindows[id].setIgnoreMouseEvents(true)
   memoWindows[id].on('close', (e) => {
     bounds = e.sender.getBounds()
     let tmp = memoLib.get(id)
@@ -146,8 +159,8 @@ function newMemo() {
   memo.id = id
   memo.title = '新便签'
   memo.content = ''
-  memo.locked = false
-  memo.editMode = true
+  memo.mode = 'edit'
+  memo.pinned = false
   memoLib.set(id,memo)
   showMemo(id)
 }
