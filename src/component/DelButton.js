@@ -1,9 +1,26 @@
 import ClearIcon from 'material-ui/svg-icons/content/clear';
+import DelDialog from './DelDialog'
 import FloatingActionButton from 'material-ui/FloatingActionButton';
 import React, { Component } from 'react'
 
 
 class DelButton extends Component {
+  constructor(){
+    super()
+    this.state = {}
+    this.state.dialogOpen = false
+    this.openDialog = this.openDialog.bind(this)
+    this.closeDialog = this.closeDialog.bind(this)
+  }
+
+  openDialog(){
+    this.setState({dialogOpen: true})
+  }
+
+  closeDialog(){
+    this.setState({dialogOpen: false})
+  }
+
   render(){
     let style = {
       position: 'fixed',
@@ -16,12 +33,15 @@ class DelButton extends Component {
 
     if (this.props.mode === 'edit') {
       return (
-        <FloatingActionButton zDepth={0} secondary={true} style={style}
-          iconStyle={{width:'16px',height:'16px'}}
-          onClick = {this.props.delHandler}
-        >
-          <ClearIcon style={{height:'16px',width:'16px'}}/>
-        </FloatingActionButton>
+        <div>
+          <DelDialog dialogOpen={this.state.dialogOpen} closeDialog={this.closeDialog} delHandler={this.props.delHandler}/>
+          <FloatingActionButton zDepth={0} secondary={true} style={style}
+            iconStyle={{width:'16px',height:'16px'}}
+            onClick = {this.openDialog}
+          >
+            <ClearIcon style={{height:'16px',width:'16px'}}/>
+          </FloatingActionButton>
+        </div>
       )
     } else {
       return (<div></div>)

@@ -94,7 +94,7 @@ class App extends Component {
       return (
         <TextField
           id = 'title-edit'
-          fullWidth = {true}
+          fullWidth = {false}
           style={{webkitAppRegion: 'no-drag'}}
           inputStyle={{color:white}}
           underlineFocusStyle={{borderBottomColor:white}}
@@ -144,14 +144,15 @@ class App extends Component {
       this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
     }, 200)
     ipc.on('lock', () => {
-      console.log('lock')
-      this.setState({locked:true})
-      this.saveHandler()
+      if (this.state.mode === 'edit')
+        this.saveHandler()
+      this.setState({mode: 'lock'})
     })
     ipc.on('unlock', () => {
-      console.log('un')
-      this.setState({locked:false})
-      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
+      if (this.state.mode === 'lock') {
+        this.setState({mode: 'normal'})
+        this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
+      }
     })
   }
 

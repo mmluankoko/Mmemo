@@ -7,7 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "electron .",
     "webpack-dev": "webpack --watch",
-    "webpack-prod": "NODE_ENV=production webpack"
+    "webpack-prod": "NODE_ENV=production webpack",
+    "pack-win": "electron-packager . Mmemo --asar --overwrite --out=../electron-pack --platform=win32 --arch=ia32 --icon=./asset/bin_icons/icon.ico",
+    "pack-mac": "electron-packager . Mmemo --asar --overwrite --out=../electron-pack --platform=darwin --arch=x64 --icon=./asset/bin_icons/icon.icns"
   },
   "author": "",
   "license": "ISC",
@@ -21,17 +23,17 @@
     "babel-preset-es2015": "^6.3.13",
     "babel-preset-react": "^6.3.13",
     "babel-preset-stage-0": "^6.3.13",
+    "material-ui": "^0.18.1",
+    "react-dom": "^15.5.4",
+    "react-tap-event-plugin": "^2.0.1",
+    "react": "^15.5.4",
     "webpack": "^2.5.1"
   },
   "dependencies": {
-    "electron": "^1.6.7",
     "electron-config": "^1.0.0",
     "electron-window": "^0.8.1",
-    "material-ui": "^0.18.1",
+    "electron": "^1.6.7",
     "opn": "^5.0.0",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4",
-    "react-tap-event-plugin": "^2.0.1",
     "shortid": "^2.2.8"
   }
 }

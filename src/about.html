@@ -58,7 +58,7 @@
       top: 2px;
     }
     .material-ui .logo-text{
-      color: rgba(255, 255, 255, 0.870588);
+      color: rgba(255, 255, 255, 0.87);
       font-size: 24px;
       font-weight: 300;
       top: 0px;
@@ -69,7 +69,9 @@
 <body>
   <div id="app"></div>
   <script type="text/javascript">
-    const remote = require('electron').remote
+    const electron = require('electron')
+    const remote = electron.remote
+    electron.webFrame.setVisualZoomLevelLimits(1.0, 1.0)
     const opn = require('opn');
   </script>
   <script src="about.min.js" charset="utf-8"></script>

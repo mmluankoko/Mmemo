@@ -13,6 +13,20 @@ const path = require('path')
 const url = require('url')
 const win = require('electron-window')
 
+const shouldQuit = app.makeSingleInstance((argv, wd) => {})
+if (shouldQuit) {
+  let msg
+  if (platform === 'win32') {
+    msg = 'Mmemo已运行在Windows任务栏通知区域，\n请不要打开多个Mmemo实例。'
+  } else if (platform === 'darwin'){
+    msg = 'Mmemo已运行在MacOS菜单栏，\n请不要打开多个Mmemo实例。'
+  } else {
+    msg = 'Mmemo已运行，\n请不要打开多个Mmemo实例。'
+  }
+  dialog.showErrorBox('Mmemo 已运行', msg)
+  app.quit()
+}
+
 const memoLib = new Config({name:'memoLib'})
 const memoPagePath = path.resolve(__dirname, 'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
@@ -71,9 +85,13 @@ app.on('ready', () => {
     })
   }
 
-  // show exsiting memos
-  for (let id in memoLib.store) {
-    showMemo(id)
+  if (memoLib.size == 0)
+    newMemo()
+  else {
+    // show exsiting memos
+    for (let id in memoLib.store) {
+      showMemo(id)
+    }
   }
 })
 
@@ -129,8 +147,8 @@ function showMemo(id) {
     skipTaskbar: true,
     acceptFirstMouse: true
   })
-  // if (memo.locked)
-  //   memoWindows[id].setIgnoreMouseEvents(true)
+  if (memo.mode === 'lock')
+    memoWindows[id].setIgnoreMouseEvents(true)
   memoWindows[id].on('close', (e) => {
     bounds = e.sender.getBounds()
     let tmp = memoLib.get(id)

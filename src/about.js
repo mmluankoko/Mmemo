@@ -44,7 +44,7 @@ class App extends Component {
             </div>
             <CardText style={{textAlign:'center'}}>&copy; 2017 mmluankoko.</CardText>
             <CardActions style={{textAlign:'center'}}>
-              <FlatButton label="关闭"
+              <FlatButton label="关闭" style={{webkitAppRegion: 'no-drag'}}
                           onClick={() => remote.getCurrentWindow().close()}/>
             </CardActions>
           </Card>
