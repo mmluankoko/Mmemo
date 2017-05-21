@@ -4,16 +4,19 @@ import ReactDOM from 'react-dom'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
-import { white } from 'material-ui/styles/colors'
+import { white,cyan500 } from 'material-ui/styles/colors'
 import {Card, CardText} from 'material-ui/Card'
 import AppBar from 'material-ui/AppBar'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
 import TextField from 'material-ui/TextField'
+import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
-import DelButton  from './component/DelButton'
-import EditButton from './component/EditButton'
-import PinButton  from './component/PinButton'
+
+import AdvancedBar from'./component/AdvancedBar'
+import DelButton   from './component/DelButton'
+import EditButton  from './component/EditButton'
+import PinButton   from './component/PinButton'
 
 class App extends Component {
   constructor() {
@@ -25,13 +28,22 @@ class App extends Component {
     this.state.content = data.content
     this.state.mode = data.mode
     this.state.pinned = data.pinned
+    this.state.advancedMode = data.advancedMode
+    this.themeColor = data.themeColor ? data.themeColor : cyan500
     this.state.theme = getMuiTheme({
       appBar: {
         height: 46,
         padding: 12
       },
+      toolbar: {
+        height: 46,
+        titleFontSize: 18
+      },
       svgIcon: {
         color: white
+      },
+      palette: {
+        primary1Color: this.themeColor
       }
     })
     console.log(this.state)
@@ -41,12 +53,18 @@ class App extends Component {
     this.editHandler = this.editHandler.bind(this)
     this.delHandler = this.delHandler.bind(this)
     this.pinHandler = this.pinHandler.bind(this)
+    this.changeColor = this.changeColor.bind(this)
+    this.getHeight = this.getHeight.bind(this)
+  }
+
+  getHeight(){
+    return document.getElementById('app').clientHeight+35
   }
 
   saveHandler(){
     this.setState({mode: 'normal'})
     setTimeout(() => {
-      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
+      this.setWinHeight(this.getHeight())
     }, 500)
     document.title = this.state.title + ' - Mmemo'
     if (this.tID) clearInterval(this.tID)
@@ -56,6 +74,7 @@ class App extends Component {
     d.content = this.state.content
     d.mode = this.state.mode === 'lock' ? 'lock' : 'normal'
     d.pinned = this.state.pinned
+    d.themeColor = this.themeColor
     ipc.send('set-memo', d)
   }
 
@@ -63,7 +82,7 @@ class App extends Component {
     this.setWinHeight(400)
     this.setState({mode: 'edit'})
     this.tID = setInterval(() => {
-      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
+      this.setWinHeight(this.getHeight())
     }, 100)
   }
 
@@ -80,6 +99,27 @@ class App extends Component {
       this.setState({pinned:true})
       ipc.send('pin-memo', this.state.id)
     }
+  }
+
+  changeColor(c){
+    this.themeColor = c
+    let t = getMuiTheme({
+      appBar: {
+        height: 46,
+        padding: 12
+      },
+      toolbar: {
+        height: 46,
+        titleFontSize: 18
+      },
+      svgIcon: {
+        color: white
+      },
+      palette: {
+        primary1Color: c
+      }
+    })
+    this.setState({theme:t})
   }
 
   setWinHeight(h){
@@ -139,9 +179,11 @@ class App extends Component {
   }
 
   componentDidMount(){
+    console.log(this.getHeight());
+
     document.title = this.state.title + ' - Mmemo'
     setTimeout(() => {
-      this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
+      this.setWinHeight(this.getHeight())
     }, 200)
     ipc.on('lock', () => {
       if (this.state.mode === 'edit')
@@ -151,12 +193,15 @@ class App extends Component {
     ipc.on('unlock', () => {
       if (this.state.mode === 'lock') {
         this.setState({mode: 'normal'})
-        this.setWinHeight(ReactDOM.findDOMNode(this).clientHeight+35)
+        this.setWinHeight(this.getHeight())
       }
     })
+    ipc.on('advancedModeOn',  () => this.setState({advancedMode:true}))
+    ipc.on('advancedModeOff', () => this.setState({advancedMode:false}))
   }
 
   render() {
+    console.log(this.state);
     return (
       <MuiThemeProvider muiTheme={this.state.theme}>
         <div>
@@ -169,7 +214,8 @@ class App extends Component {
                   iconElementLeft={<PinButton pinned={this.state.pinned} pinHandler={this.pinHandler}/>}
                   iconStyleLeft={{marginRight: '0px'}}
                   />
-          <Card>
+          <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight}/>
+          <Card rounded={false}>
             <CardText>
               {this.getContent()}
             </CardText>

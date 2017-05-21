@@ -27,8 +27,10 @@ if (shouldQuit) {
   app.quit()
 }
 
-const memoLib = new Config({name:'memoLib'})
-const memoPagePath = path.resolve(__dirname, 'src', 'memo.html')
+const memoLib  = new Config({name:'memoLib'})
+const conf = new Config({name:'conf'})
+if (!conf.has('advancedMode')) conf.set('advancedMode', false)
+const memoPagePath = path.resolve(__dirname,  'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
 
 let debug = false
@@ -53,15 +55,26 @@ app.on('ready', () => {
     },{
       label: '全部解锁',
       click: () => {broadCast('unlock')
-                    for (let id in memoWindows) {
+                    for (let id in memoWindows)
                       memoWindows[id].setIgnoreMouseEvents(false)
-                    }}
+                    }
     },{
       label: '全部锁定',
       click: () => {broadCast('lock')
-                    for (let id in memoWindows) {
+                    for (let id in memoWindows)
                       memoWindows[id].setIgnoreMouseEvents(true)
-                    }}
+                    }
+    },{
+      label: '高级模式',
+      type: 'checkbox',
+      checked: conf.get('advancedMode'),
+      click: (e) =>{let checked = e.checked
+                    conf.set('advancedMode', checked)
+                    if (checked)
+                      broadCast('advancedModeOn')
+                    else
+                      broadCast('advancedModeOff')
+                  }
     },{
       type: 'separator'
     },{
@@ -155,6 +168,7 @@ function showMemo(id) {
     tmp.bounds = bounds
     memoLib.set(id, tmp)
   })
+  memo.advancedMode = conf.get('advancedMode')
   memoWindows[id].showUrl(memoPagePath, memo)
 }
 
