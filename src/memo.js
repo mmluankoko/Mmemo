@@ -13,7 +13,8 @@ import TextField from 'material-ui/TextField'
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
 
 
-import AdvancedBar from'./component/AdvancedBar'
+import AdvancedBar from './component/AdvancedBar'
+import baseTheme   from './component/baseTheme'
 import DelButton   from './component/DelButton'
 import EditButton  from './component/EditButton'
 import PinButton   from './component/PinButton'
@@ -30,23 +31,7 @@ class App extends Component {
     this.state.pinned = data.pinned
     this.state.advancedMode = data.advancedMode
     this.themeColor = data.themeColor ? data.themeColor : cyan500
-    this.state.theme = getMuiTheme({
-      appBar: {
-        height: 46,
-        padding: 12
-      },
-      toolbar: {
-        height: 46,
-        titleFontSize: 18
-      },
-      svgIcon: {
-        color: white
-      },
-      palette: {
-        primary1Color: this.themeColor
-      }
-    })
-    console.log(this.state)
+    this.state.theme = getMuiTheme(baseTheme(this.themeColor))
     this.win = remote.getCurrentWindow()
     this.winWidth = this.win.getSize()[0]
     this.saveHandler = this.saveHandler.bind(this)
@@ -103,22 +88,7 @@ class App extends Component {
 
   changeColor(c){
     this.themeColor = c
-    let t = getMuiTheme({
-      appBar: {
-        height: 46,
-        padding: 12
-      },
-      toolbar: {
-        height: 46,
-        titleFontSize: 18
-      },
-      svgIcon: {
-        color: white
-      },
-      palette: {
-        primary1Color: c
-      }
-    })
+    let t = getMuiTheme(baseTheme(this.themeColor))
     this.setState({theme:t})
   }
 
@@ -179,8 +149,6 @@ class App extends Component {
   }
 
   componentDidMount(){
-    console.log(this.getHeight());
-
     document.title = this.state.title + ' - Mmemo'
     setTimeout(() => {
       this.setWinHeight(this.getHeight())

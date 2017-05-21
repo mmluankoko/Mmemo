@@ -10,12 +10,14 @@ import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import RaisedButton from 'material-ui/RaisedButton';
 
+import baseTheme from './component/baseTheme'
+
 
 class App extends Component {
 
   render() {
     return (
-      <MuiThemeProvider>
+      <MuiThemeProvider muiTheme={getMuiTheme(baseTheme(this.themeColor))}>
           <Card>
             <CardText style={{textAlign:'center'}}><strong>Mmemo</strong> is powered by</CardText>
             <div class='container electron' onClick={() => opn('https://electron.atom.io/')}>
