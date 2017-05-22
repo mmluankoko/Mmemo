@@ -5,10 +5,7 @@ import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import * as colors from 'material-ui/styles/colors'
-
-
-
-
+import muiThemeable from 'material-ui/styles/muiThemeable';
 
 
 class AdvancedBar extends Component {
@@ -34,29 +31,31 @@ class AdvancedBar extends Component {
     }
     if (this.props.mode==='edit' && this.props.advancedMode) {
       return (
-        <Toolbar>
-          <ToolbarGroup firstChild={true}>
-            <RaisedButton label="更改颜色" primary={true} onTouchTap={(e) => {
-              this.setState({colorOpen: true,anchorEl: e.currentTarget})
-            }}/>
-            <Popover
-              open={this.state.colorOpen}
-              anchorEl={this.state.anchorEl}
-              anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-              targetOrigin={{horizontal: 'left', vertical: 'top'}}
-              onRequestClose={this.closeColor}
-              animation={PopoverAnimationVertical}
-            >
-              <Menu desktop={true} maxHeight={this.props.getHeight() - 100} width={88} autoWidth={false}>
-                {items}
-              </Menu>
-            </Popover>
-          </ToolbarGroup>
-        </Toolbar>
+        <div style={{backgroundColor:this.props.muiTheme.palette.primary1Color}}>
+          <Toolbar style={{backgroundColor:'rgba(0,0,0,0.5)'}}>
+            <ToolbarGroup firstChild={true}>
+              <RaisedButton label="更改颜色" primary={true} onTouchTap={(e) => {
+                this.setState({colorOpen: true,anchorEl: e.currentTarget})
+              }}/>
+              <Popover
+                open={this.state.colorOpen}
+                anchorEl={this.state.anchorEl}
+                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+                targetOrigin={{horizontal: 'left', vertical: 'top'}}
+                onRequestClose={this.closeColor}
+                animation={PopoverAnimationVertical}
+              >
+                <Menu desktop={true} maxHeight={this.props.getHeight() - 100} width={88} autoWidth={false}>
+                  {items}
+                </Menu>
+              </Popover>
+            </ToolbarGroup>
+          </Toolbar>
+        </div>
       )
     } else {
       return (<div></div>)}
   }
 }
 
-export default AdvancedBar
+export default muiThemeable()(AdvancedBar)

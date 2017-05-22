@@ -5,7 +5,6 @@ import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
 import { white,cyan500 } from 'material-ui/styles/colors'
-import {Card, CardText} from 'material-ui/Card'
 import AppBar from 'material-ui/AppBar'
 import getMuiTheme from 'material-ui/styles/getMuiTheme'
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider'
@@ -15,6 +14,7 @@ import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui
 
 import AdvancedBar from './component/AdvancedBar'
 import baseTheme   from './component/baseTheme'
+import Content     from './component/Content'
 import DelButton   from './component/DelButton'
 import EditButton  from './component/EditButton'
 import PinButton   from './component/PinButton'
@@ -40,6 +40,7 @@ class App extends Component {
     this.pinHandler = this.pinHandler.bind(this)
     this.changeColor = this.changeColor.bind(this)
     this.getHeight = this.getHeight.bind(this)
+    this.getContent = this.getContent.bind(this)
   }
 
   getHeight(){
@@ -66,9 +67,9 @@ class App extends Component {
   editHandler(){
     this.setWinHeight(400)
     this.setState({mode: 'edit'})
-    this.tID = setInterval(() => {
-      this.setWinHeight(this.getHeight())
-    }, 100)
+    // this.tID = setInterval(() => {
+    //   this.setWinHeight(this.getHeight())
+    // }, 100)
   }
 
   delHandler(){
@@ -181,13 +182,10 @@ class App extends Component {
                   iconElementRight={<EditButton mode={this.state.mode} editHandler={this.editHandler} saveHandler={this.saveHandler}/>}
                   iconElementLeft={<PinButton pinned={this.state.pinned} pinHandler={this.pinHandler}/>}
                   iconStyleLeft={{marginRight: '0px'}}
+                  zDepth={0}
                   />
           <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight}/>
-          <Card rounded={false}>
-            <CardText>
-              {this.getContent()}
-            </CardText>
-          </Card>
+          <Content getContent={this.getContent} />
         </div>
       </MuiThemeProvider>
     )
