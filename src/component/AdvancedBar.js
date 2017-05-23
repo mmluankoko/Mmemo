@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import {Toolbar, ToolbarGroup, ToolbarSeparator, ToolbarTitle} from 'material-ui/Toolbar';
-import RaisedButton from 'material-ui/RaisedButton';
+import IconButton from 'material-ui/IconButton';
 import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
 import * as colors from 'material-ui/styles/colors'
 import muiThemeable from 'material-ui/styles/muiThemeable';
+import ActionGrade from 'material-ui/svg-icons/action/grade';
 
 
 class AdvancedBar extends Component {
@@ -33,24 +34,35 @@ class AdvancedBar extends Component {
       return (
         <div style={{backgroundColor:this.props.muiTheme.palette.primary1Color}}>
           <Toolbar style={{backgroundColor:colors.lightBlack}}>
-            <ToolbarGroup firstChild={true}>
-              <RaisedButton label="更改颜色" primary={true} onTouchTap={(e) => {
-                this.setState({colorOpen: true,anchorEl: e.currentTarget})
-              }}/>
-              <Popover
-                open={this.state.colorOpen}
-                anchorEl={this.state.anchorEl}
-                anchorOrigin={{horizontal: 'left', vertical: 'top'}}
-                targetOrigin={{horizontal: 'left', vertical: 'top'}}
-                onRequestClose={this.closeColor}
-                animation={PopoverAnimationVertical}
+            <ToolbarGroup>
+              <IconButton tooltip="色" tooltipPosition="bottom-center"
+                onClick={(e) => {this.setState({colorOpen: true,anchorEl: e.currentTarget})}}
               >
-                <Menu desktop={true} maxHeight={this.props.getHeight() - 100} width={88} autoWidth={false}>
-                  {items}
-                </Menu>
-              </Popover>
+                <ActionGrade />
+              </IconButton>
+              <IconButton tooltip="字" tooltipPosition="bottom-center">
+                <ActionGrade />
+              </IconButton>
+              <IconButton tooltip="删" tooltipPosition="bottom-center">
+                <ActionGrade />
+              </IconButton>
+              <IconButton tooltip="好" tooltipPosition="bottom-center">
+                <ActionGrade />
+              </IconButton>
             </ToolbarGroup>
           </Toolbar>
+          <Popover
+            open={this.state.colorOpen}
+            anchorEl={this.state.anchorEl}
+            anchorOrigin={{horizontal: 'left', vertical: 'top'}}
+            targetOrigin={{horizontal: 'left', vertical: 'top'}}
+            onRequestClose={this.closeColor}
+            animation={PopoverAnimationVertical}
+          >
+            <Menu desktop={true} maxHeight={this.props.getHeight() - 100} width={88} autoWidth={false}>
+              {items}
+            </Menu>
+          </Popover>
         </div>
       )
     } else {
