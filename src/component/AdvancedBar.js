@@ -20,11 +20,11 @@ class AdvancedBar extends Component {
   }
 
   render(){
-    const c =[ colors.red500,colors.pink500,colors.purple500,colors.deepPurple500,
-             colors.indigo500,colors.blue500,colors.lightBlue500,colors.cyan500,
-             colors.teal500,colors.green500,colors.lightGreen500,colors.lime500,
-             colors.yellow500,colors.amber500,colors.orange500,colors.deepOrange500,
-             colors.brown500,colors.blueGrey500,colors.grey500 ]
+    const c =[ colors.red300,colors.pink300,colors.purple300,colors.deepPurple300,
+             colors.indigo300,colors.blue300,colors.lightBlue300,colors.cyan300,
+             colors.teal300,colors.green300,colors.lightGreen300,colors.lime300,
+             colors.yellow300,colors.amber300,colors.orange300,colors.deepOrange300,
+             colors.brown300,colors.blueGrey300,colors.grey300 ]
     let items = []
     for (let color of c) {
       items.push(<MenuItem key={getID()} primaryText="████" style={{color:color}} onClick={(e)=>{this.props.changeColor(color);this.closeColor();}}/>)
@@ -32,7 +32,7 @@ class AdvancedBar extends Component {
     if (this.props.mode==='edit' && this.props.advancedMode) {
       return (
         <div style={{backgroundColor:this.props.muiTheme.palette.primary1Color}}>
-          <Toolbar style={{backgroundColor:'rgba(0,0,0,0.5)'}}>
+          <Toolbar style={{backgroundColor:colors.lightBlack}}>
             <ToolbarGroup firstChild={true}>
               <RaisedButton label="更改颜色" primary={true} onTouchTap={(e) => {
                 this.setState({colorOpen: true,anchorEl: e.currentTarget})
