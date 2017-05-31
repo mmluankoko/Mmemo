@@ -1,7 +1,8 @@
-import { white } from 'material-ui/styles/colors'
+import { white,lightWhite } from 'material-ui/styles/colors'
 import IconButton from 'material-ui/IconButton'
 import PublishIcon from 'material-ui/svg-icons/editor/publish'
 import React, { Component } from 'react'
+
 
 
 class PinButton extends Component {
@@ -12,7 +13,7 @@ class PinButton extends Component {
         tooltipPosition="bottom-right"
         onClick={this.props.pinHandler}
         className='no-drag'>
-        <PublishIcon color={this.props.pinned ? white : 'rgba(255,255,255,0.5)'}/>
+        <PublishIcon color={this.props.pinned ? white : lightWhite}/>
       </IconButton>
     )
   }

@@ -37,8 +37,8 @@ class App extends Component {
     this.pinHandler = this.pinHandler.bind(this)
     this.changeColor = this.changeColor.bind(this)
     this.getHeight = this.getHeight.bind(this)
-    this.getContent = this.getContent.bind(this)
     this.getTitle = this.getTitle.bind(this)
+    this.setState = this.setState.bind(this)
   }
 
   getHeight(){
@@ -117,36 +117,6 @@ class App extends Component {
     }
   }
 
-  getContent(){
-    if (this.state.mode === 'edit') {
-      return (
-        <TextField
-          id = 'content-edit'
-          fullWidth = {true}
-          hintText = '输入便签内容'
-          defaultValue={this.state.content}
-          multiLine={true}
-          style={{fontSize:'14px'}}
-          onChange={(e, v) => this.setState({content:v})}
-        />
-      )
-    }
-    else {
-      let renderList = []
-      let spaceSplit = this.state.content.split(' ')
-      for (let item of spaceSplit) {
-        let newlineSplit = item.split('\n')
-        for (let i of newlineSplit) {
-          renderList.push(<span key={getID()}>{i}</span>)
-          renderList.push(<br key={getID()}/>)
-        }
-        renderList.pop()
-        renderList.push(<span key={getID()}>&nbsp;</span>)
-      }
-      renderList.pop()
-      return renderList
-    }
-  }
 
   componentDidMount(){
     document.title = this.state.title + ' - Mmemo'
@@ -175,8 +145,8 @@ class App extends Component {
         <div>
           <TitleBar getTitle={this.getTitle} getHeight={this.getHeight} mode={this.state.mode} pinned={this.state.pinned}
                     editHandler={this.editHandler} saveHandler={this.saveHandler} pinHandler={this.pinHandler}/>
-          <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight}/>
-          <Content getContent={this.getContent} />
+          <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight} delHandler={this.delHandler} saveHandler={this.saveHandler}/>
+          <Content mode={this.state.mode} setS={this.setState} content={this.state.content} />
         </div>
       </MuiThemeProvider>
     )

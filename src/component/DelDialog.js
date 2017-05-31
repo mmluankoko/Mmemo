@@ -38,7 +38,7 @@ class DelDialog extends Component {
         open={this.props.dialogOpen}
         onRequestClose={this.props.closeDialog}
       >
-        确认删除这个便签吗？
+        确认删除这个便签吗？ (不可恢复)
       </Dialog>
     )
   }

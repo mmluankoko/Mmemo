@@ -1,7 +1,9 @@
-import ClearIcon from 'material-ui/svg-icons/content/clear';
+import DelIcon from 'material-ui/svg-icons/action/delete-forever';
 import DelDialog from './DelDialog'
-import FloatingActionButton from 'material-ui/FloatingActionButton';
+import CheckButton from 'material-ui/IconButton';
 import React, { Component } from 'react'
+import IconButton from 'material-ui/IconButton';
+import {red400} from 'material-ui/styles/colors'
 
 
 class DelButton extends Component {
@@ -22,31 +24,17 @@ class DelButton extends Component {
   }
 
   render(){
-    let style = {
-      position: 'fixed',
-      top: '0px',
-      bottom: 'auto',
-      left: 'auto',
-      right: '0px',
-      zIndex: '2000',
-      webkitAppRegion: 'no-drag'}
-
-    if (this.props.mode === 'edit') {
-      return (
-        <div>
-          <DelDialog dialogOpen={this.state.dialogOpen} closeDialog={this.closeDialog} delHandler={this.props.delHandler}/>
-          <FloatingActionButton zDepth={0} secondary={true} style={style}
-            iconStyle={{width:'16px',height:'16px'}}
-            onClick = {this.openDialog}
-          >
-            <ClearIcon style={{height:'16px',width:'16px'}}/>
-          </FloatingActionButton>
-        </div>
-      )
-    } else {
-      return (<div></div>)
-    }
+    return (
+      <div>
+        <DelDialog dialogOpen={this.state.dialogOpen} closeDialog={this.closeDialog} delHandler={this.props.delHandler}/>
+        <IconButton tooltip="删除" tooltipPosition="bottom-left"
+          onClick = {this.openDialog}>
+          <DelIcon color={red400}/>
+        </IconButton>
+      </div>
+    )
   }
+
 }
 
 
