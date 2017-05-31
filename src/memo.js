@@ -132,7 +132,6 @@ class App extends Component {
             id = 'content-edit'
             fullWidth = {true}
             defaultValue={this.state.content}
-            hintText = '输入便签内容'
             multiLine={true}
             style={{fontSize:'14px',transition:null}}
             onChange={(e, v) => this.setState({content:v})}
