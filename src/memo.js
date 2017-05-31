@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 import ReactDOM from 'react-dom'
-
+import ResizeSensor from 'css-element-queries/src/ResizeSensor'
 import injectTapEventPlugin from 'react-tap-event-plugin'
 injectTapEventPlugin()
 
@@ -15,6 +15,7 @@ import baseTheme   from './component/baseTheme'
 import Content     from './component/Content'
 import DelButton   from './component/DelButton'
 import TitleBar    from './component/TitleBar'
+import SaveSnack   from './component/SaveSnack'
 
 class App extends Component {
   constructor() {
@@ -27,10 +28,13 @@ class App extends Component {
     this.state.mode = data.mode
     this.state.pinned = data.pinned
     this.state.advancedMode = data.advancedMode
+    this.state.rows = data.rows ? data.rows : 1
     this.themeColor = data.themeColor ? data.themeColor : cyan300
     this.state.theme = getMuiTheme(baseTheme(this.themeColor))
+    this.state.SaveSnackOpen = false
     this.win = remote.getCurrentWindow()
     this.winWidth = this.win.getSize()[0]
+    this.rowCheckTimer = 0
     this.saveHandler = this.saveHandler.bind(this)
     this.editHandler = this.editHandler.bind(this)
     this.delHandler = this.delHandler.bind(this)
@@ -39,6 +43,17 @@ class App extends Component {
     this.getHeight = this.getHeight.bind(this)
     this.getTitle = this.getTitle.bind(this)
     this.setState = this.setState.bind(this)
+    this.exitHandler = this.exitHandler.bind(this)
+    this.closeSaveSnack = this.closeSaveSnack.bind(this)
+    this.textOnChangeHandler = this.textOnChangeHandler.bind(this)
+    this.updateRows=this.updateRows.bind(this)
+    this.setRowCheck=this.setRowCheck.bind(this)
+  }
+
+  updateWinSize(){
+    let a = document.getElementById('app')
+    this.win.setContentSize(this.winWidth,a.clientHeight)
+    console.log(a.clientWidth,a.clientHeight);
   }
 
   getHeight(){
@@ -46,12 +61,7 @@ class App extends Component {
   }
 
   saveHandler(){
-    this.setState({mode: 'normal'})
-    setTimeout(() => {
-      this.setWinHeight(this.getHeight())
-    }, 500)
     document.title = this.state.title + ' - Mmemo'
-    if (this.tID) clearInterval(this.tID)
     let d = {}
     d.id = this.state.id
     d.title = this.state.title
@@ -60,10 +70,15 @@ class App extends Component {
     d.pinned = this.state.pinned
     d.themeColor = this.themeColor
     ipc.send('set-memo', d)
+    this.setState({SaveSnackOpen:true})
+  }
+  exitHandler(){
+    this.saveHandler()
+    this.setState({mode: 'normal'})
   }
 
   editHandler(){
-    this.setWinHeight(400)
+    // this.setWinHeight(400)
     this.setState({mode: 'edit'})
     // this.tID = setInterval(() => {
     //   this.setWinHeight(this.getHeight())
@@ -85,6 +100,13 @@ class App extends Component {
     }
   }
 
+  textOnChangeHandler(e, v){
+    let x=document.getElementById('content-edit')
+    // console.log(parseInt(x.style.height.replace('px','')));
+    // console.log(x);
+    this.setState({content:v})
+  }
+
   changeColor(c){
     this.themeColor = c
     let t = getMuiTheme(baseTheme(this.themeColor))
@@ -96,6 +118,10 @@ class App extends Component {
       h = 120
     }
     this.win.setSize(this.winWidth,h)
+  }
+
+  closeSaveSnack(){
+    this.setState({SaveSnackOpen:false})
   }
 
   getTitle(){
@@ -117,12 +143,21 @@ class App extends Component {
     }
   }
 
+  updateRows(){
+    let x=document.getElementById('content-edit')
+    let h=parseInt(x.style.height.replace('px',''))
+    this.setState({rows:h/24})
+  }
+  setRowCheck(){
+    console.log(this.rowCheckTimer);
+    // this.rowCheckTimer = setInterval(this.updateRows,500)
+  }
 
   componentDidMount(){
     document.title = this.state.title + ' - Mmemo'
-    setTimeout(() => {
-      this.setWinHeight(this.getHeight())
-    }, 200)
+    // setTimeout(() => {
+    //   this.setWinHeight(this.getHeight())
+    // }, 200)
     ipc.on('lock', () => {
       if (this.state.mode === 'edit')
         this.saveHandler()
@@ -131,11 +166,22 @@ class App extends Component {
     ipc.on('unlock', () => {
       if (this.state.mode === 'lock') {
         this.setState({mode: 'normal'})
-        this.setWinHeight(this.getHeight())
+        // this.setWinHeight(this.getHeight())
       }
     })
     ipc.on('advancedModeOn',  () => this.setState({advancedMode:true}))
     ipc.on('advancedModeOff', () => this.setState({advancedMode:false}))
+    new ResizeSensor(ReactDOM.findDOMNode(this), () => {
+      if (this.state.mode==='edit') {
+        // this.updateRows()
+      }
+      // this.updateWinSize()
+      // this.setState({rows:1})
+      // console.log();
+      // setTimeout(()=>this.updateWinSize(),1000)
+    //   // console.log('myelement has been resized');
+      // this.updateWinSize()
+    });
   }
 
   render() {
@@ -144,9 +190,10 @@ class App extends Component {
       <MuiThemeProvider muiTheme={this.state.theme}>
         <div>
           <TitleBar getTitle={this.getTitle} getHeight={this.getHeight} mode={this.state.mode} pinned={this.state.pinned}
-                    editHandler={this.editHandler} saveHandler={this.saveHandler} pinHandler={this.pinHandler}/>
+                    editHandler={this.editHandler} exitHandler={this.exitHandler} pinHandler={this.pinHandler}/>
           <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight} delHandler={this.delHandler} saveHandler={this.saveHandler}/>
-          <Content mode={this.state.mode} setS={this.setState} content={this.state.content} />
+          <Content mode={this.state.mode} content={this.state.content} rows={this.state.rows} textOnChangeHandler={this.textOnChangeHandler} setRowCheck={this.setRowCheck}/>
+          <SaveSnack open={this.state.SaveSnackOpen} closeSaveSnack={this.closeSaveSnack} />
         </div>
       </MuiThemeProvider>
     )

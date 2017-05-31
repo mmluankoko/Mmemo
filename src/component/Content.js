@@ -7,12 +7,9 @@ import ReactDOM from 'react-dom'
 
 class T extends Component {
   componentDidMount(){
-    let x = ReactDOM.findDOMNode(this)
-    console.log('t',x);
-    x.addEventListener('transitionend', ()=>console.log('trans'))
-    x.addEventListener('animationstart', ()=>console.log('trans'))
-
+    this.props.setRowCheck()
   }
+
   render(){
     return (
       <TextField
@@ -21,8 +18,9 @@ class T extends Component {
         hintText = '输入便签内容'
         defaultValue={this.props.content}
         multiLine={true}
-        style={{fontSize:'14px'}}
-        onChange={(e, v) => this.props.x({content:v})}
+        rows={this.props.rows}
+        style={{fontSize:'14px',transition:null}}
+        onChange={this.props.textOnChangeHandler}
       />
     )
   }
@@ -34,7 +32,9 @@ class Content extends Component {
       return (
         <T
           content={this.props.content}
-          x={this.props.setS}
+          rows={this.props.rows}
+          textOnChangeHandler={this.props.textOnChangeHandler}
+          setRowCheck={this.props.setRowCheck}
         />
       )
     }
@@ -53,11 +53,6 @@ class Content extends Component {
       renderList.pop()
       return renderList
     }
-  }
-  componentDidMount(){
-    let x = ReactDOM.findDOMNode(this)
-    console.log('c',x);
-    // x.addEventListener('transitionstart', ()=>console.log('t'))
   }
   render(){
     return (

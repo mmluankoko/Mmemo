@@ -15,7 +15,7 @@ class TitleBar extends Component {
               showMenuIconButton={true}
               className='drag no-select'
               titleStyle={{fontSize:'20px'}}
-              iconElementRight={<EditButton mode={this.props.mode} editHandler={this.props.editHandler} saveHandler={this.props.saveHandler}/>}
+              iconElementRight={<EditButton mode={this.props.mode} editHandler={this.props.editHandler} exitHandler={this.props.exitHandler}/>}
               iconElementLeft={<PinButton pinned={this.props.pinned} pinHandler={this.props.pinHandler}/>}
               iconStyleLeft={{marginRight: '0px'}}
               zDepth={0}

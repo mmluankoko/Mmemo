@@ -30,9 +30,10 @@
     "webpack": "^2.5.1"
   },
   "dependencies": {
+    "css-element-queries": "^0.4.0",
+    "electron": "^1.6.7",
     "electron-config": "^1.0.0",
     "electron-window": "^0.8.1",
-    "electron": "^1.6.7",
     "opn": "^5.0.0",
     "shortid": "^2.2.8"
   }
