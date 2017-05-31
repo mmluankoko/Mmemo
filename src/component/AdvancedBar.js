@@ -21,7 +21,7 @@ class AdvancedBar extends Component {
 
 
   render(){
-    if (this.props.mode==='edit' && this.props.advancedMode) {
+    if (this.props.mode==='edit') {
       return (
         <div style={{backgroundColor:this.props.muiTheme.palette.primary1Color}}>
           <Toolbar style={{backgroundColor:colors.lightBlack}}>

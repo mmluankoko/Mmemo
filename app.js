@@ -33,7 +33,7 @@ if (!conf.has('advancedMode')) conf.set('advancedMode', false)
 const memoPagePath = path.resolve(__dirname,  'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
 
-let debug = true
+let debug = false
 let tray = null
 let aboutWindow
 let memoWindows = {}
@@ -64,18 +64,20 @@ app.on('ready', () => {
                     for (let id in memoWindows)
                       memoWindows[id].setIgnoreMouseEvents(true)
                     }
-    },{
-      label: '高级模式',
-      type: 'checkbox',
-      checked: conf.get('advancedMode'),
-      click: (e) =>{let checked = e.checked
-                    conf.set('advancedMode', checked)
-                    if (checked)
-                      broadCast('advancedModeOn')
-                    else
-                      broadCast('advancedModeOff')
-                  }
-    },{
+    },
+    // {
+    //   label: '高级模式',
+    //   type: 'checkbox',
+    //   checked: conf.get('advancedMode'),
+    //   click: (e) =>{let checked = e.checked
+    //                 conf.set('advancedMode', checked)
+    //                 if (checked)
+    //                   broadCast('advancedModeOn')
+    //                 else
+    //                   broadCast('advancedModeOff')
+    //               }
+    // },
+    {
       type: 'separator'
     },{
       label: '关于...',
@@ -140,7 +142,7 @@ function showMemo(id) {
   let x,y,w,h
   if (!memo.bounds) {
     w = 400
-    h = 400
+    h = 185
   } else {
     x = memo.bounds.x
     y = memo.bounds.y
@@ -153,7 +155,7 @@ function showMemo(id) {
     width: w,
     height: h,
     alwaysOnTop: memo.pinned,
-    transparent: debug ? false : true,
+    transparent: debug ? false : false,
     resizable: debug ? true : false,
     fullscreenable: false,
     frame: debug ? true : false,

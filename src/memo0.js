@@ -42,7 +42,6 @@ class App extends Component {
     this.changeColor = this.changeColor.bind(this)
     this.getHeight = this.getHeight.bind(this)
     this.getTitle = this.getTitle.bind(this)
-    this.getContent = this.getContent.bind(this)
     this.setState = this.setState.bind(this)
     this.exitHandler = this.exitHandler.bind(this)
     this.closeSaveSnack = this.closeSaveSnack.bind(this)
@@ -125,41 +124,6 @@ class App extends Component {
     this.setState({SaveSnackOpen:false})
   }
 
-  getContent(){
-      if (this.state.mode === 'edit') {
-        return (
-          <TextField
-            id = 'content-edit'
-            fullWidth = {true}
-            defaultValue={this.state.content}
-            hintText = '输入便签内容'
-            multiLine={true}
-            style={{fontSize:'14px',transition:null}}
-            onChange={(e, v) => this.setState({content:v})}
-          />
-        )
-      }
-      else {
-        let renderList = []
-        let spaceSplit = this.state.content.split(' ')
-        for (let item of spaceSplit) {
-          let newlineSplit = item.split('\n')
-          for (let i of newlineSplit) {
-            renderList.push(<span key={getID()}>{i}</span>)
-            renderList.push(<br key={getID()}/>)
-          }
-          renderList.pop()
-          renderList.push(<span key={getID()}>&nbsp;</span>)
-        }
-        renderList.pop()
-        return (
-          <div style={{minHeight:80}}>
-            {renderList}
-          </div>
-        )
-      }
-    }
-
   getTitle(){
     if (this.state.mode === 'edit') {
       return (
@@ -194,7 +158,6 @@ class App extends Component {
     // setTimeout(() => {
     //   this.setWinHeight(this.getHeight())
     // }, 200)
-    this.updateWinSize()
     ipc.on('lock', () => {
       if (this.state.mode === 'edit')
         this.saveHandler()
@@ -206,16 +169,18 @@ class App extends Component {
         // this.setWinHeight(this.getHeight())
       }
     })
+    ipc.on('advancedModeOn',  () => this.setState({advancedMode:true}))
+    ipc.on('advancedModeOff', () => this.setState({advancedMode:false}))
     new ResizeSensor(ReactDOM.findDOMNode(this), () => {
-      // if (this.state.mode==='edit') {
+      if (this.state.mode==='edit') {
         // this.updateRows()
-      // }
+      }
       // this.updateWinSize()
       // this.setState({rows:1})
       // console.log();
       // setTimeout(()=>this.updateWinSize(),1000)
     //   // console.log('myelement has been resized');
-      this.updateWinSize()
+      // this.updateWinSize()
     });
   }
 
@@ -227,7 +192,7 @@ class App extends Component {
           <TitleBar getTitle={this.getTitle} getHeight={this.getHeight} mode={this.state.mode} pinned={this.state.pinned}
                     editHandler={this.editHandler} exitHandler={this.exitHandler} pinHandler={this.pinHandler}/>
           <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight} delHandler={this.delHandler} saveHandler={this.saveHandler}/>
-          <Content getContent={this.getContent}/>
+          <Content mode={this.state.mode} content={this.state.content} rows={this.state.rows} textOnChangeHandler={this.textOnChangeHandler} setRowCheck={this.setRowCheck}/>
           <SaveSnack open={this.state.SaveSnackOpen} closeSaveSnack={this.closeSaveSnack} />
         </div>
       </MuiThemeProvider>

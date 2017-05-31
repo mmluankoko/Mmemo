@@ -10,12 +10,12 @@ class EditButton extends Component {
   render() {
     if (this.props.mode === 'edit') {
       return (
-        <IconButton className='no-drag' tooltip="保存并退出编辑" tooltipPosition="bottom-left" onClick={this.props.exitHandler}><EditIcon color={white}/></IconButton>
+        <IconButton className='no-drag' tooltip="编辑模式" tooltipPosition="bottom-left" onClick={this.props.exitHandler}><EditIcon color={white}/></IconButton>
       )
     }
     else if (this.props.mode === 'normal') {
       return (
-        <IconButton className='no-drag' tooltip="进入编辑模式" tooltipPosition="bottom-left" onClick={this.props.editHandler}><EditIcon color={lightWhite}/></IconButton>
+        <IconButton className='no-drag' tooltip="编辑模式" tooltipPosition="bottom-left" onClick={this.props.editHandler}><EditIcon color={lightWhite}/></IconButton>
       )
     }
     else if (this.props.mode === 'lock') {
