@@ -17,7 +17,7 @@ export default function(c){
       textField: {
         focusColor: 'rgba(255, 255, 255, 0.87)'
       },
-      fontFamily: '"PingFang SC","Heiti SC","Microsoft YaHei UI","Microsoft YaHei",SimHei,Roboto,Helvetica,Arial,sans-serif'
+      fontFamily: '"PingFang SC","STHeiti SC-light","Microsoft YaHei UI","Microsoft YaHei",SimHei,Roboto,Helvetica,Arial,sans-serif'
     }
 
   return t
