@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
+import { Card, CardText } from 'material-ui/Card'
 import muiThemeable from 'material-ui/styles/muiThemeable';
-import {Card, CardText} from 'material-ui/Card'
 
 
 class Content extends Component {

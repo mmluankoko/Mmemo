@@ -1,9 +1,6 @@
 import React, { Component } from 'react'
-
 import { white } from 'material-ui/styles/colors'
 import AppBar from 'material-ui/AppBar'
-import TextField from 'material-ui/TextField'
-
 import EditButton  from './EditButton'
 import PinButton   from './PinButton'
 
@@ -23,5 +20,6 @@ class TitleBar extends Component {
     )
   }
 }
+
 
 export default TitleBar

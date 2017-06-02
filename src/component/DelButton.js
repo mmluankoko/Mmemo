@@ -1,9 +1,8 @@
-import DelIcon from 'material-ui/svg-icons/action/delete-forever';
-import DelDialog from './DelDialog'
-import CheckButton from 'material-ui/IconButton';
 import React, { Component } from 'react'
+import { red400 } from 'material-ui/styles/colors'
+import DelIcon from 'material-ui/svg-icons/action/delete-forever';
 import IconButton from 'material-ui/IconButton';
-import {red400} from 'material-ui/styles/colors'
+import DelDialog from './DelDialog'
 
 
 class DelButton extends Component {
@@ -34,7 +33,6 @@ class DelButton extends Component {
       </div>
     )
   }
-
 }
 
 

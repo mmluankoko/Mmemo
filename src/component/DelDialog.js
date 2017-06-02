@@ -1,9 +1,7 @@
+import React, { Component } from 'react'
 import { red500 } from 'material-ui/styles/colors'
-import ClearIcon from 'material-ui/svg-icons/content/clear';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import React, { Component } from 'react'
 
 
 class DelDialog extends Component {

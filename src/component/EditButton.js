@@ -1,9 +1,7 @@
+import React, { Component } from 'react'
+import { white,lightWhite } from 'material-ui/styles/colors'
 import EditIcon from 'material-ui/svg-icons/image/edit'
 import IconButton from 'material-ui/IconButton'
-import React, { Component } from 'react'
-import SaveIcon from 'material-ui/svg-icons/content/save'
-import { white,lightWhite } from 'material-ui/styles/colors'
-
 
 
 class EditButton extends Component {

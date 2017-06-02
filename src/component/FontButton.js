@@ -1,6 +1,6 @@
+import React, { Component } from 'react'
 import FontIcon from 'material-ui/svg-icons/content/text-format';
 import IconButton from 'material-ui/IconButton';
-import React, { Component } from 'react'
 
 
 class FontButton extends Component {
@@ -12,7 +12,6 @@ class FontButton extends Component {
       </IconButton>
     )
   }
-
 }
 
 

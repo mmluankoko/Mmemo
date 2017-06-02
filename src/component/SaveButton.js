@@ -1,8 +1,7 @@
+import React, { Component } from 'react'
+import { green400 } from 'material-ui/styles/colors'
 import CheckIcon from 'material-ui/svg-icons/navigation/check';
 import IconButton from 'material-ui/IconButton';
-import React, { Component } from 'react'
-import {green400} from 'material-ui/styles/colors'
-
 
 
 class SaveButton extends Component {
@@ -14,7 +13,6 @@ class SaveButton extends Component {
       </IconButton>
     )
   }
-
 }
 
 

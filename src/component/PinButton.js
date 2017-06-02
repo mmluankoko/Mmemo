@@ -1,8 +1,7 @@
+import React, { Component } from 'react'
 import { white,lightWhite } from 'material-ui/styles/colors'
 import IconButton from 'material-ui/IconButton'
 import PublishIcon from 'material-ui/svg-icons/editor/publish'
-import React, { Component } from 'react'
-
 
 
 class PinButton extends Component {

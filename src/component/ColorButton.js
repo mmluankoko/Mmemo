@@ -1,10 +1,10 @@
 import React, { Component } from 'react'
+import * as colors from 'material-ui/styles/colors'
 import IconButton from 'material-ui/IconButton';
-import Popover, {PopoverAnimationVertical} from 'material-ui/Popover';
 import Menu from 'material-ui/Menu';
 import MenuItem from 'material-ui/MenuItem';
-import * as colors from 'material-ui/styles/colors'
 import muiThemeable from 'material-ui/styles/muiThemeable';
+import Popover, { PopoverAnimationVertical } from 'material-ui/Popover';
 import ColorIcon from 'material-ui/svg-icons/image/color-lens';
 
 
@@ -53,5 +53,6 @@ class ColorButton extends Component {
     )
   }
 }
+
 
 export default muiThemeable()(ColorButton)
