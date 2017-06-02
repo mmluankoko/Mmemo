@@ -217,7 +217,7 @@ class App extends Component {
       this.updateWinSize()
     });
     window.onbeforeunload = (e) => {
-      
+
       e.returnValue = false
     }
   }

@@ -37,6 +37,7 @@ class ColorButton extends Component {
           <ColorIcon />
         </IconButton>
         <Popover
+          className='popup'
           open={this.state.colorOpen}
           anchorEl={this.state.anchorEl}
           anchorOrigin={{horizontal: 'left', vertical: 'top'}}
@@ -44,7 +45,7 @@ class ColorButton extends Component {
           onRequestClose={this.closeColor}
           animation={PopoverAnimationVertical}
         >
-          <Menu desktop={true} maxHeight={this.props.getHeight() - 100} width={88} autoWidth={false}>
+          <Menu desktop={true} maxHeight={this.props.getHeight() - 85} width={88} autoWidth={false}>
             {items}
           </Menu>
         </Popover>
