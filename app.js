@@ -186,7 +186,7 @@ function showMemo(id) {
 function showAbout(){
   aboutWindow = win.createWindow({
     width: 310,
-    height: 329,
+    height: 345,
     useContentSize: true,
     frame: false,
     resizable: false,
@@ -194,7 +194,7 @@ function showAbout(){
     minimizable: false,
     maximizable: false,
     scrollBounce: false,
-    backgroundColor: '#00FFFFFF'
+    backgroundColor: '#FFFFFF'
   })
   aboutWindow.showUrl(aboutPagePath)
 }
