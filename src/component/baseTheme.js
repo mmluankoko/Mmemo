@@ -12,7 +12,7 @@ export default function(c){
         color: '#ffffff'
       },
       palette: {
-        primary1Color: c
+        primary1Color: c ? c : '#00BCD4'
       },
       textField: {
         focusColor: 'rgba(255, 255, 255, 0.87)'
