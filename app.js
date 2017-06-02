@@ -172,6 +172,7 @@ function showMemo(id) {
     minimizable: false,
     maximizable: false,
     backgroundColor: '#00FFFFFF',
+    scrollBounce: false,
     frame: debug ? true : false,
     skipTaskbar: true,
     acceptFirstMouse: true
@@ -192,6 +193,7 @@ function showAbout(){
     fullscreenable: false,
     minimizable: false,
     maximizable: false,
+    scrollBounce: false,
     backgroundColor: '#00FFFFFF'
   })
   aboutWindow.showUrl(aboutPagePath)

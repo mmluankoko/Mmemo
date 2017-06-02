@@ -47,8 +47,6 @@ class App extends Component {
     this.exitHandler = this.exitHandler.bind(this)
     this.closeSaveSnack = this.closeSaveSnack.bind(this)
     this.textOnChangeHandler = this.textOnChangeHandler.bind(this)
-    this.updateRows=this.updateRows.bind(this)
-    this.setRowCheck=this.setRowCheck.bind(this)
   }
 
   updateWinSize(){
@@ -81,6 +79,7 @@ class App extends Component {
   editHandler(){
     // this.setWinHeight(400)
     this.setState({mode: 'edit'})
+    document.getElementById('title-edit').focus()
     // this.tID = setInterval(() => {
     //   this.setWinHeight(this.getHeight())
     // }, 100)
@@ -102,9 +101,6 @@ class App extends Component {
   }
 
   textOnChangeHandler(e, v){
-    let x=document.getElementById('content-edit')
-    // console.log(parseInt(x.style.height.replace('px','')));
-    // console.log(x);
     this.setState({content:v})
   }
 
@@ -135,6 +131,7 @@ class App extends Component {
             multiLine={true}
             style={{fontSize:'14px',transition:null}}
             onChange={(e, v) => this.setState({content:v})}
+            onKeyDown={(e)=>{if(e.key==='Tab'){e.preventDefault();document.getElementById('content-edit').value+='    ';}}}
           />
         )
       }
@@ -152,7 +149,7 @@ class App extends Component {
         }
         renderList.pop()
         return (
-          <div style={{minHeight:80}}>
+          <div style={{minHeight:80}} onDoubleClick={()=>this.editHandler()}>
             {renderList}
           </div>
         )
@@ -170,23 +167,15 @@ class App extends Component {
           inputStyle={{color:white}}
           defaultValue={this.state.title}
           onChange={(e, v) => this.setState({title:v})}
+          onKeyDown={(e)=>{if(e.key==='Tab'){e.preventDefault();document.getElementById('content-edit').focus();}}}
         />
       )
     }
     else {
-      return this.state.title
+      return (<div onDoubleClick={()=>this.editHandler()}>{this.state.title}</div>)
     }
   }
 
-  updateRows(){
-    let x=document.getElementById('content-edit')
-    let h=parseInt(x.style.height.replace('px',''))
-    this.setState({rows:h/24})
-  }
-  setRowCheck(){
-    console.log(this.rowCheckTimer);
-    // this.rowCheckTimer = setInterval(this.updateRows,500)
-  }
 
   componentDidMount(){
     document.title = this.state.title + ' - Mmemo'
