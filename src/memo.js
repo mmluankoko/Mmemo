@@ -216,6 +216,10 @@ class App extends Component {
     //   // console.log('myelement has been resized');
       this.updateWinSize()
     });
+    window.onbeforeunload = (e) => {
+      
+      e.returnValue = false
+    }
   }
 
   render() {

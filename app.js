@@ -110,6 +110,17 @@ app.on('ready', () => {
   }
 })
 
+app.on('before-quit', function(){
+  for (let id in memoWindows) {
+    let bounds = memoWindows[id].getBounds()
+    console.log(bounds)
+    let tmp = memoLib.get(id)
+    tmp.bounds = bounds
+    memoLib.set(id, tmp)
+    memoWindows[id].destroy()
+  }
+})
+
 app.on('window-all-closed', function () {
 })
 
@@ -124,7 +135,7 @@ ipc.on('del-memo', (e, id) => {
   let tmp = memoWindows[id]
   memoLib.delete(id)
   delete memoWindows[id]
-  tmp.close()
+  tmp.destroy()
 })
 
 ipc.on('pin-memo', (e, id) => {
@@ -155,21 +166,18 @@ function showMemo(id) {
     width: w,
     height: h,
     alwaysOnTop: memo.pinned,
-    transparent: debug ? false : false,
+    // transparent: debug ? false : false,
     resizable: debug ? true : false,
     fullscreenable: false,
+    minimizable: false,
+    maximizable: false,
+    backgroundColor: '#00FFFFFF',
     frame: debug ? true : false,
     skipTaskbar: true,
     acceptFirstMouse: true
   })
   if (memo.mode === 'lock')
     memoWindows[id].setIgnoreMouseEvents(true)
-  memoWindows[id].on('close', (e) => {
-    bounds = e.sender.getBounds()
-    let tmp = memoLib.get(id)
-    tmp.bounds = bounds
-    memoLib.set(id, tmp)
-  })
   memo.advancedMode = conf.get('advancedMode')
   memoWindows[id].showUrl(memoPagePath, memo)
 }
@@ -177,10 +185,14 @@ function showMemo(id) {
 function showAbout(){
   aboutWindow = win.createWindow({
     width: 310,
-    height: 400,
-    transparent: true,
+    height: 329,
+    useContentSize: true,
     frame: false,
-    resizable: false
+    resizable: false,
+    fullscreenable: false,
+    minimizable: false,
+    maximizable: false,
+    backgroundColor: '#00FFFFFF'
   })
   aboutWindow.showUrl(aboutPagePath)
 }
