@@ -20,15 +20,13 @@ class ColorButton extends Component {
   }
 
   render(){
-    const c =[ colors.red300,colors.pink300,colors.purple300,colors.deepPurple300,
+    const items =[ colors.red300,colors.pink300,colors.purple300,colors.deepPurple300,
              colors.indigo300,colors.blue300,colors.lightBlue300,colors.cyan300,
              colors.teal300,colors.green300,colors.lightGreen300,colors.lime300,
              colors.yellow300,colors.amber300,colors.orange300,colors.deepOrange300,
-             colors.brown300,colors.blueGrey300,colors.grey300 ]
-    let items = []
-    for (let color of c) {
-      items.push(<MenuItem key={getID()} primaryText="████" style={{color:color}} onClick={(e)=>{this.props.changeColor(color);this.closeColor();}}/>)
-    }
+             colors.brown300,colors.blueGrey300,colors.grey300 ].map(
+               (color, i) => <MenuItem key={i} primaryText="████" style={{color:color}} onClick={(e)=>{this.props.changeColor(color);this.closeColor();}}/>
+             )
 
     return (
       <div>
