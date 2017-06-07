@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Toolbar - Mmemo</title>
+  <style>
+    body{
+      margin: 0;
+      overflow: hidden;
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+    }
+    .drag{
+      -webkit-user-select: none;
+      -webkit-app-region: drag;
+    }
+    .no-drag{
+      -webkit-app-region: no-drag;
+    }
+    button{
+      -webkit-app-region: no-drag;
+    }
+
+  </style>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="text/javascript">
+    const electron = require('electron')
+    const ipc = electron.ipcRenderer
+    electron.webFrame.setVisualZoomLevelLimits(1.0, 1.0)
+  </script>
+  <script src="toolbar.min.js" charset="utf-8"></script>
+</body>
+</html>

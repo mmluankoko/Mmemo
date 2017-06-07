@@ -17,11 +17,11 @@ const shouldQuit = app.makeSingleInstance((argv, wd) => {})
 if (shouldQuit) {
   let msg
   if (platform === 'win32') {
-    msg = 'Mmemo已运行在Windows任务栏通知区域，\n请不要打开多个Mmemo实例。'
+    msg = 'Mmemo 已运行在 Windows 任务栏通知区域，\n请不要打开多个 Mmemo 实例。'
   } else if (platform === 'darwin'){
-    msg = 'Mmemo已运行在MacOS菜单栏，\n请不要打开多个Mmemo实例。'
+    msg = 'Mmemo 已运行在 MacOS 菜单栏，\n请不要打开多个 Mmemo 实例。'
   } else {
-    msg = 'Mmemo已运行，\n请不要打开多个Mmemo实例。'
+    msg = 'Mmemo 已运行，\n请不要打开多个 Mmemo 实例。'
   }
   dialog.showErrorBox('Mmemo 已运行', msg)
   app.quit()
@@ -30,11 +30,16 @@ if (shouldQuit) {
 const memoLib  = new Config({name:'memoLib'})
 const conf = new Config({name:'conf'})
 if (!conf.has('advancedMode')) conf.set('advancedMode', false)
+if (!conf.has('toolbar')) conf.set('toolbar', false)
+if (!conf.has('locked')) conf.set('locked', false)
+
 const memoPagePath = path.resolve(__dirname,  'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
+const toolbarPagePath = path.resolve(__dirname, 'src', 'toolbar.html')
 
 let debug = false
 let tray = null
+let toolbarWindow
 let aboutWindow
 let memoWindows = {}
 
@@ -52,19 +57,26 @@ app.on('ready', () => {
     [{
       label: '新便签...',
       click: () => newMemo()
-    },{
-      label: '全部解锁',
-      click: () => {broadCast('unlock')
-                    for (let id in memoWindows)
-                      memoWindows[id].setIgnoreMouseEvents(false)
-                    }
-    },{
-      label: '全部锁定',
-      click: () => {broadCast('lock')
-                    for (let id in memoWindows)
-                      memoWindows[id].setIgnoreMouseEvents(true)
-                    }
     },
+    {
+      label: '显示工具栏',
+      type: 'checkbox',
+      checked: conf.get('toolbar'),
+      click: (e) => {toogleToobar(e.checked)}
+    },
+    // {
+    //   label: '全部解锁',
+    //   click: () => {broadCast('unlock')
+    //                 for (let id in memoWindows)
+    //                   memoWindows[id].setIgnoreMouseEvents(false)
+    //                 }
+    // },{
+    //   label: '全部锁定',
+    //   click: () => {broadCast('lock')
+    //                 for (let id in memoWindows)
+    //                   memoWindows[id].setIgnoreMouseEvents(true)
+    //                 }
+    // },
     // {
     //   label: '高级模式',
     //   type: 'checkbox',
@@ -108,9 +120,21 @@ app.on('ready', () => {
       showMemo(id)
     }
   }
+
+  if (conf.get('toolbar')) {
+    showToolbar()
+  }
 })
 
 app.on('before-quit', function(){
+  if (aboutWindow) {
+    aboutWindow.destroy()
+  }
+  if (toolbarWindow) {
+    let pos = toolbarWindow.getPosition()
+    conf.set('toolbarPos', pos)
+    toolbarWindow.destroy()
+  }
   for (let id in memoWindows) {
     let bounds = memoWindows[id].getBounds()
     console.log(bounds)
@@ -126,6 +150,10 @@ app.on('window-all-closed', function () {
 
 app.on('activate', function () {
 })
+
+ipc.on('new-memo', ()=>newMemo())
+
+ipc.on('show-memos', ()=>showMemos())
 
 ipc.on('set-memo', (e, d) => {
   memoLib.set(d.id, d)
@@ -194,10 +222,39 @@ function showAbout(){
     minimizable: false,
     maximizable: false,
     scrollBounce: false,
-    backgroundColor: '#FFFFFF'
+    backgroundColor: '#00FFFFFF'
   })
   aboutWindow.showUrl(aboutPagePath)
 }
+
+function showToolbar(){
+  let toolbarPos
+  if (conf.has('toolbarPos')) {
+    toolbarPos = conf.get('toolbarPos')
+  }
+  toolbarWindow = win.createWindow({
+    x: toolbarPos ? toolbarPos[0] : null,
+    y: toolbarPos ? toolbarPos[1] : null,
+    width: 160,
+    height: 25,
+    useContentSize: true,
+    frame: false,
+    resizable: false,
+    fullscreenable: false,
+    minimizable: false,
+    maximizable: false,
+    scrollBounce: false,
+    backgroundColor: '#00FFFFFF',
+    alwaysOnTop:true,
+    transparent:true,
+    hasShadow:false,
+    focusable: false,
+    skipTaskbar: true,
+    acceptFirstMouse: true
+  })
+  toolbarWindow.showUrl(toolbarPagePath, {locked:conf.get('locked')})
+}
+
 
 function newMemo() {
   let id =getID()
@@ -212,6 +269,32 @@ function newMemo() {
   memo.pinned = false
   memoLib.set(id,memo)
   showMemo(id)
+}
+
+function showMemos(){
+  if (JSON.stringify(memoWindows)!==JSON.stringify({})) {
+    for (let id in memoWindows) {
+      memoWindows[id].showInactive()
+    }
+  }
+}
+
+function toogleToobar(on){
+  if (on) {
+    if (!toolbarWindow) {
+      showToolbar()
+      conf.set('toolbar',true)
+    }
+  }
+  else {
+    if (toolbarWindow) {
+      let pos = toolbarWindow.getPosition()
+      conf.set('toolbarPos', pos)
+      toolbarWindow.destroy()
+      toolbarWindow=null
+      conf.set('toolbar',false)
+    }
+  }
 }
 
 function broadCast(c) {

@@ -7,7 +7,8 @@ module.exports = {
   devtool: debug ? "inline-sourcemap" : false,
   entry: {
         memo: path.join(__dirname, "src", 'memo.js'),
-        about: path.join(__dirname, "src", 'about.js')
+        about: path.join(__dirname, "src", 'about.js'),
+        toolbar: path.join(__dirname, "src", 'toolbar.js')
     },
   module: {
     loaders: [
