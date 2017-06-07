@@ -27,8 +27,6 @@ class App extends Component {
     this.state.content = data.content
     this.state.mode = data.mode
     this.state.pinned = data.pinned
-    this.state.advancedMode = data.advancedMode
-    this.state.rows = data.rows ? data.rows : 1
     this.themeColor = data.themeColor ? data.themeColor : cyan300
     this.state.theme = getMuiTheme(baseTheme(this.themeColor))
     this.state.SaveSnackOpen = false
@@ -79,7 +77,7 @@ class App extends Component {
   editHandler(){
     // this.setWinHeight(400)
     this.setState({mode: 'edit'})
-    document.getElementById('title-edit').focus()
+    // document.getElementById('title-edit').focus()
     // this.tID = setInterval(() => {
     //   this.setWinHeight(this.getHeight())
     // }, 100)
@@ -123,6 +121,19 @@ class App extends Component {
 
   getContent(){
       if (this.state.mode === 'edit') {
+        let keyHandler=(e)=>{
+          if(e.key==='Tab'){
+            e.preventDefault()
+            let el = document.getElementById('content-edit')
+            let cPos = el.selectionStart
+            let ori = el.value
+            let newText = ori.substring(0, cPos)+'    '+ori.substring(cPos)
+            el.value = newText
+            this.setState({content:newText})
+            el.selectionStart=cPos+4
+            el.selectionEnd=cPos+4
+          }
+        }
         return (
           <TextField
             id = 'content-edit'
@@ -131,21 +142,25 @@ class App extends Component {
             multiLine={true}
             style={{fontSize:'14px',transition:null}}
             onChange={(e, v) => this.setState({content:v})}
-            onKeyDown={(e)=>{if(e.key==='Tab'){e.preventDefault();document.getElementById('content-edit').value+='    ';}}}
+            onKeyDown={keyHandler}
           />
         )
       }
       else {
         let renderList = []
+        let k = 0
         let spaceSplit = this.state.content.split(' ')
         for (let item of spaceSplit) {
           let newlineSplit = item.split('\n')
           for (let i of newlineSplit) {
-            renderList.push(<span key={getID()}>{i}</span>)
-            renderList.push(<br key={getID()}/>)
+            renderList.push(<span key={k}>{i}</span>)
+            k++
+            renderList.push(<br key={k}/>)
+            k++
           }
           renderList.pop()
-          renderList.push(<span key={getID()}>&nbsp;</span>)
+          renderList.push(<span key={k}>&nbsp;</span>)
+          k++
         }
         renderList.pop()
         return (
@@ -218,7 +233,7 @@ class App extends Component {
         <div>
           <TitleBar getTitle={this.getTitle} getHeight={this.getHeight} mode={this.state.mode} pinned={this.state.pinned}
                     editHandler={this.editHandler} exitHandler={this.exitHandler} pinHandler={this.pinHandler}/>
-          <AdvancedBar mode={this.state.mode} advancedMode={this.state.advancedMode} changeColor={this.changeColor} getHeight={this.getHeight} delHandler={this.delHandler} saveHandler={this.saveHandler}/>
+          <AdvancedBar mode={this.state.mode} changeColor={this.changeColor} getHeight={this.getHeight} delHandler={this.delHandler} saveHandler={this.saveHandler}/>
           <Content getContent={this.getContent}/>
           <SaveSnack open={this.state.SaveSnackOpen} closeSaveSnack={this.closeSaveSnack} />
         </div>
