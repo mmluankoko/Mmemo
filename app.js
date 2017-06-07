@@ -13,6 +13,7 @@ const path = require('path')
 const url = require('url')
 const win = require('electron-window')
 
+// Single instance detection
 const shouldQuit = app.makeSingleInstance((argv, wd) => {})
 if (shouldQuit) {
   let msg
@@ -27,16 +28,19 @@ if (shouldQuit) {
   app.quit()
 }
 
+// Load config and lib files, init them if not existed
 const memoLib  = new Config({name:'memoLib'})
 const conf = new Config({name:'conf'})
 if (!conf.has('advancedMode')) conf.set('advancedMode', false)
 if (!conf.has('toolbar')) conf.set('toolbar', false)
 if (!conf.has('locked')) conf.set('locked', false)
 
+// Page path
 const memoPagePath = path.resolve(__dirname,  'src', 'memo.html')
 const aboutPagePath = path.resolve(__dirname, 'src', 'about.html')
 const toolbarPagePath = path.resolve(__dirname, 'src', 'toolbar.html')
 
+// Globals
 let debug = false
 let tray = null
 let toolbarWindow
@@ -52,89 +56,41 @@ app.on('ready', () => {
   if (platform === 'win32') {
     iconPath = path.join(__dirname, 'asset', 'tray.ico')
   }
+  // Setup tray and its menu
   tray = new Tray(iconPath)
-  let contextMenu = Menu.buildFromTemplate(
-    [{
-      label: '新便签...',
-      click: () => newMemo()
-    },
-    {
-      label: '显示工具栏',
-      type: 'checkbox',
-      checked: conf.get('toolbar'),
-      click: (e) => {toogleToobar(e.checked)}
-    },
-    // {
-    //   label: '全部解锁',
-    //   click: () => {broadCast('unlock')
-    //                 for (let id in memoWindows)
-    //                   memoWindows[id].setIgnoreMouseEvents(false)
-    //                 }
-    // },{
-    //   label: '全部锁定',
-    //   click: () => {broadCast('lock')
-    //                 for (let id in memoWindows)
-    //                   memoWindows[id].setIgnoreMouseEvents(true)
-    //                 }
-    // },
-    // {
-    //   label: '高级模式',
-    //   type: 'checkbox',
-    //   checked: conf.get('advancedMode'),
-    //   click: (e) =>{let checked = e.checked
-    //                 conf.set('advancedMode', checked)
-    //                 if (checked)
-    //                   broadCast('advancedModeOn')
-    //                 else
-    //                   broadCast('advancedModeOff')
-    //               }
-    // },
-    {
-      type: 'separator'
-    },{
-      label: '关于...',
-      click: () => showAbout()
-    },{
-      label: '退出',
-      click: () => app.quit()
-    },{
-      label: '清空(debug)',
-      click: () => memoLib.clear()
-    }]
-  )
+  let contextMenu = getTrayMenu()
   tray.setToolTip('Mmemo')
   tray.setContextMenu(contextMenu)
-  if (platform === 'win32') {
-    tray.on('click', () => {
-      for (let id in memoWindows) {
-        memoWindows[id].focus()
-      }
-    })
-  }
+  if (platform === 'win32')
+    tray.on('click', () => showMemos())
 
+  // Show existing memos if there is any, create a new one otherwise
   if (memoLib.size == 0)
     newMemo()
   else {
-    // show exsiting memos
     for (let id in memoLib.store) {
       showMemo(id)
     }
   }
 
+  // show the toolbar if set to on
   if (conf.get('toolbar')) {
     showToolbar()
   }
 })
 
 app.on('before-quit', function(){
+  // destory aboutWindow if there is one
   if (aboutWindow) {
     aboutWindow.destroy()
   }
+  // destory toolbarWindow after saving its position
   if (toolbarWindow) {
     let pos = toolbarWindow.getPosition()
     conf.set('toolbarPos', pos)
     toolbarWindow.destroy()
   }
+  // destory all memoWindows after saving their bounds
   for (let id in memoWindows) {
     let bounds = memoWindows[id].getBounds()
     console.log(bounds)
@@ -174,8 +130,8 @@ ipc.on('unpin-memo', (e, id) => {
   memoWindows[id].setAlwaysOnTop(false)
 })
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and require them here.
+
+// helpers
 function showMemo(id) {
   let memo = memoLib.get(id)
   let x,y,w,h
@@ -303,4 +259,57 @@ function broadCast(c) {
       memoWindows[id].webContents.send(c)
     }
   }
+}
+
+function getTrayMenu(){
+  let m = Menu.buildFromTemplate(
+    [{
+      label: '新便签...',
+      click: () => newMemo()
+    },
+    {
+      label: '显示工具栏',
+      type: 'checkbox',
+      checked: conf.get('toolbar'),
+      click: (e) => {toogleToobar(e.checked)}
+    },
+    // {
+    //   label: '全部解锁',
+    //   click: () => {broadCast('unlock')
+    //                 for (let id in memoWindows)
+    //                   memoWindows[id].setIgnoreMouseEvents(false)
+    //                 }
+    // },{
+    //   label: '全部锁定',
+    //   click: () => {broadCast('lock')
+    //                 for (let id in memoWindows)
+    //                   memoWindows[id].setIgnoreMouseEvents(true)
+    //                 }
+    // },
+    // {
+    //   label: '高级模式',
+    //   type: 'checkbox',
+    //   checked: conf.get('advancedMode'),
+    //   click: (e) =>{let checked = e.checked
+    //                 conf.set('advancedMode', checked)
+    //                 if (checked)
+    //                   broadCast('advancedModeOn')
+    //                 else
+    //                   broadCast('advancedModeOff')
+    //               }
+    // },
+    {
+      type: 'separator'
+    },{
+      label: '关于...',
+      click: () => showAbout()
+    },{
+      label: '退出',
+      click: () => app.quit()
+    },{
+      label: '清空(debug)',
+      click: () => memoLib.clear()
+    }]
+  )
+  return m
 }
